@@ -21,6 +21,7 @@ label{display:grid;gap:4px;font-size:.8rem;font-weight:700;color:var(--s)}
 input,select{font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--l);border-radius:8px;background:#fbfdfc;color:var(--t);width:100%}
 .b{font:inherit;font-weight:700;cursor:pointer;background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 18px;align-self:end}
 .b:disabled{opacity:.6}
+input[type=checkbox]{width:22px;height:22px;padding:0}
 .b2{font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;background:none;color:#a9c0c4;border:1px solid #4a6368;border-radius:8px;padding:6px 12px}
 #login .b2{color:var(--a);border-color:var(--a);padding:10px}
 ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
@@ -83,24 +84,47 @@ const aviso = (x, t) => { const m = $("msg"); m.textContent = x; m.className = t
 const C = {};
 const lab = (n, id) => { const r = C[n].find(r => r[E[n].id] == id); return r ? E[n].tit(r) : "—"; };
 const DIR = ["country","state","municipality","neighborhood","street","house_number"];
+const INFO = ["description","rooms","bathrooms","floors","garage","outdoor_spaces","kitchen","living_room","dining_room","pool","furnished"];
+const carac = r => { const i = r.propieties_info || {};
+  return [i.rooms && i.rooms + " rec.", i.bathrooms && i.bathrooms + " baños", i.garage && i.garage + " cochera", i.pool && "alberca", i.furnished && "amueblada"].filter(Boolean).join(" · "); };
+
+// Convierte cualquier imagen compatible (jpg, png, webp...) a JPG de máx. 1600 px
+async function aJpg(file) {
+  try {
+    const bmp = await createImageBitmap(file), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+    const cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height);
+    cx.drawImage(bmp, 0, 0, cv.width, cv.height);
+    return await new Promise(r => cv.toBlob(r, "image/jpeg", 0.85));
+  } catch { return null; }
+}
+async function subir(file) {
+  aviso("Subiendo foto…", "ok");
+  const blob = await aJpg(file);
+  if (!blob) { aviso("Ese formato de foto no es compatible. Usa JPG, PNG o WEBP.", "error"); return null; }
+  const nombre = Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ".jpg";
+  const { error } = await db.storage.from("fotos").upload(nombre, blob, { contentType:"image/jpeg" });
+  if (error) { aviso("No se pudo subir la foto: " + error.message, "error"); return null; }
+  return db.storage.from("fotos").getPublicUrl(nombre).data.publicUrl;
+}
 
 // Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[["first_name","Nombre","text",1],["last_name","Apellido","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
-    fijo:{status:"activo"},
+    f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
   propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
-    q:"*, propieties_info(address_propiety(street,house_number,neighborhood,municipality,state))",
-    f:[["name","Nombre","text",1],["type","Tipo","text",1],["photo_one","Enlace de foto","url"],["street","Calle","text",1],["house_number","Número","num"],["neighborhood","Colonia","text"],["municipality","Municipio","text"],["state","Estado","text"],["country","País","text",1,"México"]],
+    q:"*, propieties_info(rooms,bathrooms,floors,garage,pool,furnished,kitchen,living_room,dining_room,outdoor_spaces,description,address_propiety(street,house_number,neighborhood,municipality,state))",
+    f:[["name","Nombre","text",1],["type","Tipo","text",1],["photo_one","Foto principal","img"],["photo_two","Foto 2","img"],["photo_three","Foto 3","img"],["rooms","Recámaras","num"],["bathrooms","Baños","num"],["floors","Pisos","num"],["garage","Cochera (cantidad de autos)","num"],["outdoor_spaces","Espacios exteriores","text"],["description","Descripción","text"],["kitchen","Cocina","chk"],["living_room","Sala","chk"],["dining_room","Comedor","chk"],["pool","Alberca","chk"],["furnished","Amueblada","chk"],["street","Calle","text",1],["house_number","Número","num"],["neighborhood","Colonia","text"],["municipality","Municipio","text"],["state","Estado","text"],["country","País","text",1,"México"]],
     tit:r=>r.name,
     sub:r=>{ const a = r.propieties_info?.address_propiety;
-      return r.type + " · " + (a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : "Sin dirección"); },
+      return r.type + " · " + (a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : "Sin dirección") + (carac(r) ? " · " + carac(r) : ""); },
     ins: async o => {
       const a = {}; DIR.forEach(k => { a[k] = o[k]; delete o[k]; });
       const r1 = await db.from("address_propiety").insert(a).select("id_address").single(); if (r1.error) return r1;
-      const r2 = await db.from("propieties_info").insert({id_address:r1.data.id_address}).select("id_propieties_info").single(); if (r2.error) return r2;
+      const i = { id_address:r1.data.id_address }; INFO.forEach(k => { i[k] = o[k]; delete o[k]; });
+      const r2 = await db.from("propieties_info").insert(i).select("id_propieties_info").single(); if (r2.error) return r2;
       o.id_propieties_info = r2.data.id_propieties_info;
       return db.from("propierties_for_rent").insert(o);
     } },
@@ -118,7 +142,7 @@ const E = {
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
     sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
   interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
-    f:[["full_name","Nombre","text",1],["email","Correo","email"],["phone_number","Teléfono","num"],["id_propierty","Propiedad","sel",1,null,"propiedades"],["message","Mensaje","text"]],
+    f:[], ro:1, // solo consulta: las solicitudes las envían los visitantes
     tit:r=>r.full_name,
     sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
@@ -128,8 +152,9 @@ function armar() {
   $("app").innerHTML = Object.keys(E).map((n,i) => `<section id="p-${n}" ${i ? "hidden" : ""}>
     <form data-n="${n}">${E[n].f.map(([k,l,t,r,v]) => `<label>${l}${t == "sel"
       ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
-      : `<input id="${n}-${k}" type="${t == "num" ? "number" : t}" ${t == "num" ? 'step="any"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
+      : `<input id="${n}-${k}" type="${t == "num" ? "number" : t == "chk" ? "checkbox" : t == "img" ? "file" : t}" ${t == "num" ? 'step="any"' : ""} ${t == "img" ? 'accept="image/*"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
     <button class="b">Agregar ${E[n].s}</button></form><ul id="l-${n}"></ul></section>`).join("");
+  Object.keys(E).filter(n => E[n].ro).forEach(n => document.querySelector("#p-" + n + " form").remove());
 }
 
 function pintar() {
@@ -139,7 +164,7 @@ function pintar() {
       el.innerHTML = '<option value="">Selecciona…</option>' + C[s].map(r => `<option value="${r[E[s].id]}">${esc(E[s].tit(r))}</option>`).join("");
       el.value = v; } });
     $("l-" + n).innerHTML = C[n].length
-      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div><button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button></li>`).join("")
+      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div>${E[n].ro ? "" : `<button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button>`}</li>`).join("")
       : '<li class="v">Aún no hay registros.</li>';
   }
 }
@@ -168,7 +193,7 @@ async function catalogo() {
   const { data, error } = await db.from("propierties_for_rent").select(E.propiedades.q).order("id_propierty", { ascending:false });
   if (error) return aviso("No se pudo cargar el catálogo: " + error.message, "error");
   C.cat = data;
-  $("lcat").innerHTML = data.length ? data.map(r => `<li>${r.photo_one ? `<img src="${esc(r.photo_one)}" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px">` : ""}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(E.propiedades.sub(r))}</span></div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
+  $("lcat").innerHTML = data.length ? data.map(r => `<li>${[r.photo_one, r.photo_two, r.photo_three].filter(Boolean).map(u => `<img src="${esc(u)}" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px">`).join("")}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(E.propiedades.sub(r))}</span></div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
 }
 $("interes").onsubmit = async e => {
   e.preventDefault();
@@ -208,7 +233,12 @@ document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
   e.preventDefault();
   const d = E[n], o = { ...d.fijo };
-  d.f.forEach(([k,,t]) => { const v = $(`${n}-${k}`).value.trim(); o[k] = v === "" ? null : (t == "num" || t == "sel") ? Number(v) : v; });
+  for (const [k,,t] of d.f) {
+    const el = $(`${n}-${k}`);
+    if (t == "chk") o[k] = el.checked;
+    else if (t == "img") { const fl = el.files[0]; o[k] = fl ? await subir(fl) : null; if (fl && !o[k]) return; }
+    else { const v = el.value.trim(); o[k] = v === "" ? null : (t == "num" || t == "sel") ? Number(v) : v; }
+  }
   const m = d.val && d.val(o); if (m) return aviso(m, "error");
   const btn = e.submitter; btn.disabled = true;
   const { error } = await (d.ins ? d.ins(o) : db.from(d.t).insert(o));
