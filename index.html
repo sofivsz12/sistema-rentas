@@ -25,7 +25,7 @@ h2{margin:0 0 14px;font-size:1.35rem}
 .hero{margin:6px 0 26px}
 .hero h2{font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.1;margin-bottom:8px}
 .hero p{margin:0;color:var(--s);max-width:52ch}
-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;background:#fff;border:1px solid var(--l);border-radius:18px;padding:22px;margin-bottom:26px;box-shadow:0 8px 24px -16px rgba(16,34,47,.35)}
+form{display:grid;align-items:start;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;background:#fff;border:1px solid var(--l);border-radius:18px;padding:22px;margin-bottom:26px;box-shadow:0 8px 24px -16px rgba(16,34,47,.35)}
 #login{max-width:400px;margin:36px auto;grid-template-columns:1fr}
 label{display:grid;gap:5px;font-size:.82rem;font-weight:600;color:var(--s)}
 input,select{font:inherit;font-size:.95rem;padding:11px 13px;border:1px solid var(--l);border-radius:10px;background:#F9FBFC;color:var(--t);width:100%}
@@ -119,8 +119,10 @@ li span{color:var(--s);font-size:.9rem}
 <div id="zoom" hidden><img id="zi" alt=""></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
+// ====== PEGA TUS DATOS DE SUPABASE ======
 const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
+// ========================================
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = i => document.getElementById(i);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -133,6 +135,7 @@ const INFO = ["description","rooms","bathrooms","floors","garage","outdoor_space
 const carac = r => { const i = r.propieties_info || {};
   return [i.rooms && i.rooms + " rec.", i.bathrooms && i.bathrooms + " baños", i.garage && i.garage + " cochera", i.pool && "alberca", i.furnished && "amueblada"].filter(Boolean).join(" · "); };
 
+// Convierte cualquier imagen compatible (jpg, png, webp...) a JPG de máx. 1600 px
 async function aJpg(file) {
   try {
     const bmp = await createImageBitmap(file), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
@@ -152,6 +155,7 @@ async function subir(file) {
   return db.storage.from("fotos").getPublicUrl(nombre).data.publicUrl;
 }
 
+// Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
     f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
@@ -232,6 +236,7 @@ async function cargar() {
   pintar();
 }
 
+// ---------- Sesión ----------
 const ADMIN_EMAIL = "fofyy1206@gmail.com"; // el correo del administrador (el mismo del SQL)
 let verLogin = false, esAdm = false, miId = null, miUser = null, tabActual = "cat";
 function tabC(k) {
@@ -311,6 +316,7 @@ $("salir").onclick = async () => {
   location.reload();
 };
 
+// ---------- Acciones ----------
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
   e.preventDefault();
@@ -336,10 +342,6 @@ document.addEventListener("change", async e => {
     if (error) return aviso("No se pudo actualizar el estado: " + error.message, "error");
     aviso("Estado del contrato actualizado", "ok"); return cargar();
   }
-  if (el.type != "file") return;
-  let pv = el.parentNode.querySelector(".pv");
-  if (!pv) { pv = document.createElement("img"); pv.className = "pv"; el.parentNode.appendChild(pv); }
-  pv.hidden = !el.files[0]; if (el.files[0]) pv.src = URL.createObjectURL(el.files[0]);
 });
 
 document.addEventListener("click", async e => {
