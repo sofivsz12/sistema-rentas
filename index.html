@@ -36,19 +36,31 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
 </head>
 <body>
 <header><div class="w">
-  <h1>HogarRent <button id="salir" class="b2" hidden>Cerrar sesión</button></h1>
+  <h1>HogarRent <span><button id="ir" class="b2">Iniciar sesión</button> <button id="salir" class="b2" hidden>Cerrar sesión</button></span></h1>
   <nav id="nav" hidden></nav>
 </div></header>
 
 <main class="w">
   <div id="msg" role="status"></div>
-  <form id="login">
+  <form id="login" hidden>
     <h2 style="margin:0">Iniciar sesión</h2>
     <label>Correo <input id="lc" type="email" required></label>
     <label>Contraseña <input id="lp" type="password" required minlength="6"></label>
     <button class="b">Entrar</button>
     <button type="button" id="reg" class="b2">Crear cuenta</button>
   </form>
+  <section id="cat">
+    <h2>Propiedades disponibles</h2>
+    <form id="interes" hidden>
+      <b id="i-t" style="grid-column:1/-1"></b><input type="hidden" id="i-prop">
+      <label>Nombre <input id="i-nom" required></label>
+      <label>Correo <input id="i-email" type="email" required></label>
+      <label>Teléfono <input id="i-tel" type="tel"></label>
+      <label>Mensaje <input id="i-msg" placeholder="Fechas, dudas…"></label>
+      <button class="b">Enviar</button>
+    </form>
+    <ul id="lcat"></ul>
+  </section>
   <div id="app" hidden></div>
 </main>
 
@@ -56,7 +68,6 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
 <script>
 const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
-
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = i => document.getElementById(i);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -96,7 +107,11 @@ const E = {
     fijo:{status:"pagado"},
     ins: o => { o.id_coustomers = C.contratos.find(c => c.id_agreements == o.id_agreements)?.id_coustomers; return db.from("payments_rentals").insert(o); },
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
-    sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` }
+    sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
+  interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
+    f:[["full_name","Nombre","text",1],["email","Correo","email"],["phone_number","Teléfono","num"],["id_propierty","Propiedad","sel",1,null,"propiedades"],["message","Mensaje","text"]],
+    tit:r=>r.full_name,
+    sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
 
 function armar() {
@@ -129,22 +144,43 @@ async function cargar() {
   pintar();
 }
 
+const ADMIN_EMAIL = "fofyy1206@gmail.com";
+let verLogin = false;
 db.auth.onAuthStateChange((_, ses) => {
-  const on = !!ses;
-  $("login").hidden = on; $("app").hidden = !on; $("nav").hidden = !on; $("salir").hidden = !on;
-  if (on) { if (!$("app").innerHTML) armar(); cargar(); }
+  const on = !!ses, adm = on && ses.user.email === ADMIN_EMAIL;
+  $("login").hidden = on || !verLogin; $("ir").hidden = on; $("salir").hidden = !on;
+  $("app").hidden = !adm; $("nav").hidden = !adm; $("cat").hidden = adm;
+  if (adm) { if (!$("app").innerHTML) armar(); cargar(); } else catalogo();
 });
+$("ir").onclick = () => { verLogin = true; $("login").hidden = false; };
+
+async function catalogo() {
+  const { data, error } = await db.from("propierties_for_rent").select(E.propiedades.q).order("id_propierty", { ascending:false });
+  if (error) return aviso("No se pudo cargar el catálogo: " + error.message, "error");
+  C.cat = data;
+  $("lcat").innerHTML = data.length ? data.map(r => `<li>${r.photo_one ? `<img src="${esc(r.photo_one)}" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px">` : ""}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(E.propiedades.sub(r))}</span></div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
+}
+$("interes").onsubmit = async e => {
+  e.preventDefault();
+  const tel = $("i-tel").value.replace(/\D/g, "");
+  const { error } = await db.from("property_viewings").insert({
+    id_propierty: Number($("i-prop").value), full_name: $("i-nom").value.trim(), email: $("i-email").value.trim(),
+    phone_number: tel ? Number(tel) : null, message: $("i-msg").value.trim() || null });
+  if (error) return aviso("No se pudo enviar: " + error.message, "error");
+  e.target.reset(); e.target.hidden = true; aviso("¡Listo! Recibimos tu interés y te contactaremos pronto.", "ok");
+};
 $("login").onsubmit = async e => {
   e.preventDefault();
   const { error } = await db.auth.signInWithPassword({ email:$("lc").value.trim(), password:$("lp").value });
   if (error) aviso("No se pudo iniciar sesión: " + error.message, "error");
 };
 $("reg").onclick = async () => {
+  if (!$("lc").value.trim() || $("lp").value.length < 6) return aviso("Escribe tu correo y una contraseña de al menos 6 caracteres.", "error");
   const { data, error } = await db.auth.signUp({ email:$("lc").value.trim(), password:$("lp").value });
   if (error) return aviso(error.message, "error");
   aviso(data.session ? "Cuenta creada" : "Cuenta creada. Revisa tu correo para confirmarla.", "ok");
 };
-$("salir").onclick = () => db.auth.signOut();
+$("salir").onclick = () => { verLogin = false; db.auth.signOut(); };
 
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
@@ -160,6 +196,12 @@ document.addEventListener("submit", async e => {
 });
 
 document.addEventListener("click", async e => {
+  const mi = e.target.dataset.i;
+  if (mi) {
+    $("interes").hidden = false; $("i-prop").value = mi;
+    $("i-t").textContent = "Me interesa: " + C.cat.find(r => r.id_propierty == mi).name;
+    $("interes").scrollIntoView({ behavior:"smooth" }); return;
+  }
   const tab = e.target.closest("#nav button");
   if (tab) {
     document.querySelectorAll("#nav button").forEach(x => x.setAttribute("aria-selected", x == tab));
