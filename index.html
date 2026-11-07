@@ -4,41 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HogarRent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--f:#f4f7f6;--t:#14262b;--s:#5b6e72;--l:#d8e1df;--a:#0f7b6c;--r:#b3412f}
+:root{--f:#F3F6F8;--t:#10222F;--s:#5A6E7A;--l:#DCE5EA;--a:#0E7C86;--a2:#0A5F67;--y:#FFC857;--r:#B3412F}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--f);color:var(--t);line-height:1.5}
-header{background:var(--t);color:#fff;padding:24px 20px 0}
-.w{max-width:920px;margin:0 auto}
-h1{margin:0 0 14px;font-size:1.8rem;display:flex;justify-content:space-between;align-items:center}
-nav{display:flex;gap:4px;overflow-x:auto}
-nav button{font:inherit;font-weight:700;background:none;color:#a9c0c4;border:0;padding:11px 16px;cursor:pointer;border-radius:10px 10px 0 0;white-space:nowrap}
+body{margin:0;font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--f);color:var(--t);line-height:1.5}
+h1,h2,#lcat li b{font-family:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;letter-spacing:-.02em}
+header{background:var(--t);color:#fff;padding:22px 20px 0}
+.w{max-width:1040px;margin:0 auto}
+h1{margin:0 0 18px;font-size:1.7rem;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+nav{display:flex;gap:6px;overflow-x:auto}
+nav button{font:inherit;font-weight:600;background:none;color:#9FB6C2;border:0;padding:11px 18px;cursor:pointer;border-radius:12px 12px 0 0;white-space:nowrap}
+nav button:hover{color:#fff}
 nav button[aria-selected=true]{background:var(--f);color:var(--t)}
-main{padding:26px 20px 60px}
-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;background:#fff;border:1px solid var(--l);border-radius:14px;padding:18px;margin-bottom:24px}
-#login{max-width:380px;margin:30px auto}
-label{display:grid;gap:4px;font-size:.8rem;font-weight:700;color:var(--s)}
-input,select{font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--l);border-radius:8px;background:#fbfdfc;color:var(--t);width:100%}
-.b{font:inherit;font-weight:700;cursor:pointer;background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 18px;align-self:end}
+main{padding:28px 20px 70px}
+h2{margin:0 0 14px;font-size:1.35rem}
+.hero{margin:6px 0 26px}
+.hero h2{font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.1;margin-bottom:8px}
+.hero p{margin:0;color:var(--s);max-width:52ch}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;background:#fff;border:1px solid var(--l);border-radius:18px;padding:22px;margin-bottom:26px;box-shadow:0 8px 24px -16px rgba(16,34,47,.35)}
+#login{max-width:400px;margin:36px auto;grid-template-columns:1fr}
+label{display:grid;gap:5px;font-size:.82rem;font-weight:600;color:var(--s)}
+input,select{font:inherit;font-size:.95rem;padding:11px 13px;border:1px solid var(--l);border-radius:10px;background:#F9FBFC;color:var(--t);width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #7FD3DA;outline-offset:2px}
+input[type=checkbox]{width:22px;height:22px;padding:0;accent-color:var(--a)}
+.b{font:inherit;font-weight:700;cursor:pointer;background:var(--a);color:#fff;border:0;border-radius:10px;padding:11px 20px;align-self:end}
+.b:hover{background:var(--a2)}
 .b:disabled{opacity:.6}
-input[type=checkbox]{width:22px;height:22px;padding:0}
-.b2{font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;background:none;color:#a9c0c4;border:1px solid #4a6368;border-radius:8px;padding:6px 12px}
-#login .b2{color:var(--a);border-color:var(--a);padding:10px}
-ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-li{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px}
-li b{display:block}li span{color:var(--s);font-size:.88rem}
-.x{font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;background:none;color:var(--r);border:1px solid #e6c4bd;border-radius:8px;padding:6px 12px}
-.v{color:var(--s);justify-content:center;border-style:dashed}
-#msg{display:none;margin-bottom:16px;padding:12px 16px;border-radius:10px;font-size:.92rem}
-#msg.error{display:block;background:#fbeeeb;color:var(--r);border:1px solid #e6c4bd}
-#msg.ok{display:block;background:#e3f4f0;color:#0b5c51;border:1px solid #b7e0d8}
+.b2{font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;background:none;color:#C5D6DE;border:1px solid #3B5668;border-radius:10px;padding:7px 14px}
+.b2:hover{background:#1B3547}
+#login .b2{color:var(--a);border-color:var(--a);padding:11px}
+#login .b2:hover{background:#E8F4F5}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+li{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--l);border-radius:14px;padding:15px 18px}
+li b{display:block;font-size:1.02rem}
+li span{color:var(--s);font-size:.9rem}
+.st{width:auto;padding:7px 10px;font-weight:600}
+.x{font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;background:none;color:var(--r);border:1px solid #E6C4BD;border-radius:10px;padding:7px 13px}
+.x:hover{background:#FBEEEB}
+.v{color:var(--s);justify-content:center;border-style:dashed;background:none}
+#msg{display:none;margin-bottom:18px;padding:13px 16px;border-radius:12px;font-size:.93rem}
+#msg.error{display:block;background:#FBEEEB;color:var(--r);border:1px solid #E6C4BD}
+#msg.ok{display:block;background:#E3F4F0;color:#0B5C51;border:1px solid #B7E0D8}
+#lcat{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px}
+#lcat li{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;overflow:hidden;border-radius:20px;box-shadow:0 10px 28px -18px rgba(16,34,47,.45)}
+#lcat li>div:not(.gal){padding:16px 18px 6px;flex:1}
+#lcat li b{font-size:1.2rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.chips em{font-style:normal;font-size:.8rem;font-weight:600;background:#E6F2F3;color:var(--a2);border-radius:999px;padding:3px 10px}
+.ct{display:block;margin-top:12px;padding-top:10px;border-top:1px solid var(--l)}
+.ct a{color:var(--a2);font-weight:600}
+#lcat .b{margin:10px 18px 18px;align-self:stretch}
+.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.gal img{flex:0 0 100%;width:100%;height:230px;object-fit:cover;scroll-snap-align:start;cursor:zoom-in}
+.pv{width:100%;max-height:180px;object-fit:cover;border-radius:10px}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);display:grid;place-items:center;z-index:9;cursor:zoom-out}
+#zoom img{max-width:94vw;max-height:90vh;border-radius:10px}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header><div class="w">
-  <h1>HogarRent <span><button id="ir" class="b2">Iniciar sesión</button> <button id="salir" class="b2" hidden>Cerrar sesión</button></span></h1>
+  <h1><span class="logo"><svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="#FFC857"/></svg>HogarRent</span> <span><button id="ir" class="b2">Iniciar sesión</button> <button id="salir" class="b2" hidden>Cerrar sesión</button></span></h1>
   <nav id="nav" hidden></nav>
+  <nav id="nav2" hidden>
+    <button data-s="cat" aria-selected="true">Propiedades</button>
+    <button data-s="con" aria-selected="false">Mis contratos</button>
+    <button data-s="pub" aria-selected="false">Mis propiedades</button>
+  </nav>
 </div></header>
 
 <main class="w">
@@ -57,7 +93,7 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
     <button type="button" id="vol" class="b2" hidden>Ya tengo cuenta</button>
   </form>
   <section id="cat">
-    <h2>Propiedades disponibles</h2>
+    <div class="hero"><h2>Encuentra tu próximo hogar</h2><p>Casas y departamentos en renta. Elige una propiedad y el dueño te contacta.</p></div>
     <form id="interes" hidden>
       <b id="i-t" style="grid-column:1/-1"></b><input type="hidden" id="i-prop">
       <label>Nombre <input id="i-nom" required></label>
@@ -68,27 +104,35 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
     </form>
     <ul id="lcat"></ul>
   </section>
+  <section id="host" hidden>
+    <div id="s-con" hidden><h2>Mis contratos</h2>
+    <ul id="lcon"></ul></div>
+    <div id="s-pub" hidden><h2>Publicar mi propiedad</h2>
+    <p style="color:var(--s);margin:-6px 0 12px;font-size:.9rem">Tu nombre, teléfono y correo se mostrarán públicamente junto a tu propiedad para que te contacten.</p>
+    <div id="hform"></div>
+    <h2>Mis propiedades</h2>
+    <ul id="lmis"></ul></div>
+  </section>
   <div id="app" hidden></div>
 </main>
 
+<div id="zoom" hidden><img id="zi" alt=""></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-// ====== PEGA TUS DATOS DE SUPABASE ======
 const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
-// ========================================
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = i => document.getElementById(i);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const aviso = (x, t) => { const m = $("msg"); m.textContent = x; m.className = t; if (t == "ok") setTimeout(() => m.className = "", 2500); };
 const C = {};
 const lab = (n, id) => { const r = C[n].find(r => r[E[n].id] == id); return r ? E[n].tit(r) : "—"; };
+const ESTADOS = ["en proceso","activo","terminado","cancelado"];
 const DIR = ["country","state","municipality","neighborhood","street","house_number"];
 const INFO = ["description","rooms","bathrooms","floors","garage","outdoor_spaces","kitchen","living_room","dining_room","pool","furnished"];
 const carac = r => { const i = r.propieties_info || {};
   return [i.rooms && i.rooms + " rec.", i.bathrooms && i.bathrooms + " baños", i.garage && i.garage + " cochera", i.pool && "alberca", i.furnished && "amueblada"].filter(Boolean).join(" · "); };
 
-// Convierte cualquier imagen compatible (jpg, png, webp...) a JPG de máx. 1600 px
 async function aJpg(file) {
   try {
     const bmp = await createImageBitmap(file), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
@@ -108,10 +152,9 @@ async function subir(file) {
   return db.storage.from("fotos").getPublicUrl(nombre).data.publicUrl;
 }
 
-// Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
+    f:[], ro:1, 
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
   propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
@@ -121,6 +164,12 @@ const E = {
     sub:r=>{ const a = r.propieties_info?.address_propiety;
       return r.type + " · " + (a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : "Sin dirección") + (carac(r) ? " · " + carac(r) : ""); },
     ins: async o => {
+      if (!esAdm && miUser) { 
+        const m = miUser.user_metadata || {};
+        o.contact_name = [m.first_name, m.last_name].filter(Boolean).join(" ") || null;
+        o.contact_phone = m.phone || null;
+        o.contact_email = miUser.email;
+      }
       const a = {}; DIR.forEach(k => { a[k] = o[k]; delete o[k]; });
       const r1 = await db.from("address_propiety").insert(a).select("id_address").single(); if (r1.error) return r1;
       const i = { id_address:r1.data.id_address }; INFO.forEach(k => { i[k] = o[k]; delete o[k]; });
@@ -130,9 +179,10 @@ const E = {
     } },
   contratos: { n:"Contratos", s:"contrato", t:"rental_agreements", id:"id_agreements",
     f:[["id_property","Propiedad","sel",1,null,"propiedades"],["id_coustomers","Cliente","sel",1,null,"clientes"],["start_date","Inicio","date",1],["end_date","Fin","date",1],["monthly_rent","Renta mensual","num",1],["security_deposit","Depósito","num"],["payment_due_day","Día de pago","num"]],
-    fijo:{status:"activo"},
+    fijo:{status:"en proceso"},
+    extra:r=>`<select class="st" data-id="${r.id_agreements}">${ESTADOS.map(x => `<option ${x == r.status ? "selected" : ""}>${x}</option>`).join("")}</select>`,
     val:o=> o.end_date <= o.start_date ? "La fecha de fin debe ser posterior al inicio." :
-      C.contratos.some(c => c.id_property == o.id_property && c.status == "activo") ? "Esa propiedad ya tiene un contrato activo." : null,
+      C.contratos.some(c => c.id_property == o.id_property && ["activo","en proceso"].includes(c.status)) ? "Esa propiedad ya tiene un contrato vigente." : null,
     tit:r=>`${lab("propiedades",r.id_property)} ↔ ${lab("clientes",r.id_coustomers)}`,
     sub:r=>`${r.start_date} a ${r.end_date} · $${r.monthly_rent}/mes · ${r.status}` },
   pagos: { n:"Pagos", s:"pago", t:"payments_rentals", id:"id_payments",
@@ -142,18 +192,22 @@ const E = {
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
     sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
   interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
-    f:[], ro:1, // solo consulta: las solicitudes las envían los visitantes
+    f:[], ro:1, 
     tit:r=>r.full_name,
     sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
 
+function formHtml(n) {
+  return `<form data-n="${n}">${E[n].f.map(([k,l,t,r,v]) => `<label>${l}${t == "sel"
+      ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
+      : `<input id="${n}-${k}" type="${t == "num" ? "number" : t == "chk" ? "checkbox" : t == "img" ? "file" : t}" ${t == "num" ? 'step="any"' : ""} ${t == "img" ? 'accept="image/*"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
+    <button class="b">Agregar ${E[n].s}</button></form>`;
+}
+
 function armar() {
   $("nav").innerHTML = Object.keys(E).map((n,i) => `<button data-n="${n}" aria-selected="${i==0}">${E[n].n}</button>`).join("");
   $("app").innerHTML = Object.keys(E).map((n,i) => `<section id="p-${n}" ${i ? "hidden" : ""}>
-    <form data-n="${n}">${E[n].f.map(([k,l,t,r,v]) => `<label>${l}${t == "sel"
-      ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
-      : `<input id="${n}-${k}" type="${t == "num" ? "number" : t == "chk" ? "checkbox" : t == "img" ? "file" : t}" ${t == "num" ? 'step="any"' : ""} ${t == "img" ? 'accept="image/*"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
-    <button class="b">Agregar ${E[n].s}</button></form><ul id="l-${n}"></ul></section>`).join("");
+    ${formHtml(n)}<ul id="l-${n}"></ul></section>`).join("");
   Object.keys(E).filter(n => E[n].ro).forEach(n => document.querySelector("#p-" + n + " form").remove());
 }
 
@@ -164,7 +218,7 @@ function pintar() {
       el.innerHTML = '<option value="">Selecciona…</option>' + C[s].map(r => `<option value="${r[E[s].id]}">${esc(E[s].tit(r))}</option>`).join("");
       el.value = v; } });
     $("l-" + n).innerHTML = C[n].length
-      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div>${E[n].ro ? "" : `<button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button>`}</li>`).join("")
+      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div>${E[n].extra ? E[n].extra(r) : ""}${E[n].ro ? "" : `<button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button>`}</li>`).join("")
       : '<li class="v">Aún no hay registros.</li>';
   }
 }
@@ -178,22 +232,46 @@ async function cargar() {
   pintar();
 }
 
-// ---------- Sesión ----------
 const ADMIN_EMAIL = "fofyy1206@gmail.com"; // el correo del administrador (el mismo del SQL)
-let verLogin = false;
+let verLogin = false, esAdm = false, miId = null, miUser = null, tabActual = "cat";
+function tabC(k) {
+  tabActual = k;
+  $("cat").hidden = k != "cat"; $("s-con").hidden = k != "con"; $("s-pub").hidden = k != "pub";
+  document.querySelectorAll("#nav2 button").forEach(x => x.setAttribute("aria-selected", x.dataset.s == k));
+}
 db.auth.onAuthStateChange((_, ses) => {
   const on = !!ses, adm = on && ses.user.email === ADMIN_EMAIL;
+  esAdm = adm; miId = ses ? ses.user.id : null; miUser = ses ? ses.user : null; $("host").hidden = !on || adm; $("nav2").hidden = !on || adm;
   $("login").hidden = on || !verLogin; $("ir").hidden = on; $("salir").hidden = !on;
   $("app").hidden = !adm; $("nav").hidden = !adm; $("cat").hidden = adm;
-  if (adm) { if (!$("app").innerHTML) armar(); cargar(); } else catalogo();
+  if (adm) { if (!$("app").innerHTML) armar(); cargar(); }
+  else { tabC(on ? tabActual : "cat"); catalogo(); if (on) { if (!$("hform").innerHTML) $("hform").innerHTML = formHtml("propiedades"); misProps(); misContratos(); } }
 });
 $("ir").onclick = () => { verLogin = true; $("login").hidden = false; };
+
+const chips = r => { const i = r.propieties_info || {};
+  return [r.type, i.rooms && i.rooms + " recámaras", i.bathrooms && i.bathrooms + " baños", i.garage && "Cochera para " + i.garage, i.pool && "Alberca", i.furnished && "Amueblada"].filter(Boolean).map(x => `<em>${esc(x)}</em>`).join(""); };
+const dirTxt = r => { const a = r.propieties_info?.address_propiety;
+  return a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : ""; };
+
+async function misProps() {
+  const { data, error } = await db.from("propierties_for_rent").select(E.propiedades.q).eq("owner_id", miId).order("id_propierty", { ascending:false });
+  if (error) return aviso("No se pudieron cargar tus propiedades: " + error.message, "error");
+  $("lmis").innerHTML = data.length ? data.map(r => `<li><div><b>${esc(r.name)}</b><span>${esc(E.propiedades.sub(r))}</span></div><button class="x" data-n="propiedades" data-id="${r.id_propierty}">Eliminar</button></li>`).join("") : '<li class="v">Aún no has publicado propiedades.</li>';
+}
+async function misContratos() {
+  const { data, error } = await db.from("rental_agreements").select("*, propierties_for_rent(name,type)").order("start_date", { ascending:false });
+  if (error) return aviso("No se pudieron cargar tus contratos: " + error.message, "error");
+  const col = { activo:"#0f7b6c", "en proceso":"#b7791f", terminado:"#5b6e72", cancelado:"#b3412f" };
+  $("lcon").innerHTML = data.length ? data.map(r => `<li><div><b>${esc(r.propierties_for_rent?.name || "Propiedad")}</b><span>${esc(r.start_date)} a ${esc(r.end_date)} · $${esc(r.monthly_rent)}/mes</span></div><span style="font-weight:700;color:${col[r.status] || "var(--s)"}">${esc(r.status)}</span></li>`).join("") : '<li class="v">Aún no tienes contratos.</li>';
+}
+const refrescar = () => esAdm ? cargar() : (catalogo(), misProps());
 
 async function catalogo() {
   const { data, error } = await db.from("propierties_for_rent").select(E.propiedades.q).order("id_propierty", { ascending:false });
   if (error) return aviso("No se pudo cargar el catálogo: " + error.message, "error");
   C.cat = data;
-  $("lcat").innerHTML = data.length ? data.map(r => `<li>${[r.photo_one, r.photo_two, r.photo_three].filter(Boolean).map(u => `<img src="${esc(u)}" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px">`).join("")}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(E.propiedades.sub(r))}</span></div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
+  $("lcat").innerHTML = data.length ? data.map(r => `<li>${[r.photo_one, r.photo_two, r.photo_three].some(Boolean) ? `<div class="gal">${[r.photo_one, r.photo_two, r.photo_three].filter(Boolean).map(u => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(dirTxt(r))}</span><div class="chips">${chips(r)}</div>${r.contact_email ? `<span class="ct">Contacto: ${esc(r.contact_name || "Propietario")}${r.contact_phone ? ` · <a href="tel:${esc(r.contact_phone)}">${esc(r.contact_phone)}</a>` : ""} · <a href="mailto:${esc(r.contact_email)}">${esc(r.contact_email)}</a></span>` : ""}</div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
 }
 $("interes").onsubmit = async e => {
   e.preventDefault();
@@ -228,7 +306,6 @@ $("reg").onclick = async () => {
 };
 $("salir").onclick = () => { verLogin = false; db.auth.signOut(); };
 
-// ---------- Acciones ----------
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
   e.preventDefault();
@@ -244,16 +321,33 @@ document.addEventListener("submit", async e => {
   const { error } = await (d.ins ? d.ins(o) : db.from(d.t).insert(o));
   btn.disabled = false;
   if (error) return aviso("No se pudo guardar: " + error.message, "error");
-  f.reset(); aviso("Registro agregado", "ok"); cargar();
+  f.reset(); f.querySelectorAll(".pv").forEach(x => x.remove()); aviso("Registro agregado", "ok"); refrescar();
+});
+
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.classList.contains("st")) {
+    const { error } = await db.from("rental_agreements").update({ status: el.value }).eq("id_agreements", el.dataset.id);
+    if (error) return aviso("No se pudo actualizar el estado: " + error.message, "error");
+    aviso("Estado del contrato actualizado", "ok"); return cargar();
+  }
+  if (el.type != "file") return;
+  let pv = el.parentNode.querySelector(".pv");
+  if (!pv) { pv = document.createElement("img"); pv.className = "pv"; el.parentNode.appendChild(pv); }
+  pv.hidden = !el.files[0]; if (el.files[0]) pv.src = URL.createObjectURL(el.files[0]);
 });
 
 document.addEventListener("click", async e => {
+  if (e.target.matches(".gal img")) { $("zi").src = e.target.src; $("zoom").hidden = false; return; }
+  if (e.target.closest("#zoom")) { $("zoom").hidden = true; return; }
   const mi = e.target.dataset.i;
   if (mi) {
     $("interes").hidden = false; $("i-prop").value = mi;
     $("i-t").textContent = "Me interesa: " + C.cat.find(r => r.id_propierty == mi).name;
     $("interes").scrollIntoView({ behavior:"smooth" }); return;
   }
+  const t2 = e.target.closest("#nav2 button");
+  if (t2) { tabC(t2.dataset.s); $("msg").className = ""; return; }
   const tab = e.target.closest("#nav button");
   if (tab) {
     document.querySelectorAll("#nav button").forEach(x => x.setAttribute("aria-selected", x == tab));
@@ -265,7 +359,7 @@ document.addEventListener("click", async e => {
     const d = E[e.target.dataset.n];
     const { error } = await db.from(d.t).delete().eq(d.id, e.target.dataset.id);
     if (error) return aviso("No se pudo eliminar: " + error.message, "error");
-    aviso("Registro eliminado", "ok"); cargar();
+    aviso("Registro eliminado", "ok"); refrescar();
   }
 });
 </script>
