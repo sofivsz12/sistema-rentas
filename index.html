@@ -4,260 +4,176 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HogarRent</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --fondo: #f4f7f6;
-    --tinta: #14262b;
-    --suave: #5b6e72;
-    --linea: #d8e1df;
-    --acento: #0f7b6c;
-    --acento-osc: #0b5c51;
-    --alerta: #b3412f;
-    --blanco: #ffffff;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: var(--fondo);
-    color: var(--tinta);
-    line-height: 1.5;
-  }
-  header {
-    background: var(--tinta);
-    color: var(--blanco);
-    padding: 28px 20px 0;
-  }
-  .contenedor { max-width: 920px; margin: 0 auto; }
-  h1 { margin: 0 0 4px; font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
-  header p { margin: 0 0 20px; color: #a9c0c4; font-size: .95rem; }
-  nav { display: flex; gap: 4px; }
-  nav button {
-    font: inherit; font-weight: 700; font-size: .95rem;
-    background: transparent; color: #a9c0c4;
-    border: 0; padding: 12px 20px; cursor: pointer;
-    border-radius: 10px 10px 0 0;
-  }
-  nav button[aria-selected="true"] { background: var(--fondo); color: var(--tinta); }
-  nav button:focus-visible, button:focus-visible, input:focus-visible {
-    outline: 3px solid #7ad6c7; outline-offset: 2px;
-  }
-  main { padding: 28px 20px 60px; }
-  h2 { font-size: 1.15rem; margin: 0 0 14px; }
-  form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 10px;
-    background: var(--blanco);
-    border: 1px solid var(--linea);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 28px;
-  }
-  label { display: grid; gap: 4px; font-size: .8rem; font-weight: 700; color: var(--suave); }
-  input {
-    font: inherit; font-size: .95rem; color: var(--tinta);
-    padding: 10px 12px; border: 1px solid var(--linea); border-radius: 8px; background: #fbfdfc;
-  }
-  .btn {
-    font: inherit; font-weight: 700; cursor: pointer;
-    background: var(--acento); color: var(--blanco);
-    border: 0; border-radius: 8px; padding: 10px 18px; align-self: end;
-  }
-  .btn:hover { background: var(--acento-osc); }
-  .btn:disabled { opacity: .6; cursor: wait; }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  li {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    background: var(--blanco); border: 1px solid var(--linea);
-    border-radius: 12px; padding: 14px 16px;
-  }
-  .datos strong { display: block; font-size: 1rem; }
-  .datos span { color: var(--suave); font-size: .88rem; }
-  .eliminar {
-    font: inherit; font-size: .85rem; font-weight: 700; cursor: pointer;
-    background: transparent; color: var(--alerta);
-    border: 1px solid #e6c4bd; border-radius: 8px; padding: 6px 12px;
-  }
-  .eliminar:hover { background: #fbeeeb; }
-  .vacio { color: var(--suave); padding: 22px; text-align: center; border: 1px dashed var(--linea); border-radius: 12px; }
-  #mensaje {
-    display: none; margin-bottom: 18px; padding: 12px 16px; border-radius: 10px;
-    font-size: .92rem; font-weight: 500;
-  }
-  #mensaje.error { display: block; background: #fbeeeb; color: var(--alerta); border: 1px solid #e6c4bd; }
-  #mensaje.ok { display: block; background: #e3f4f0; color: var(--acento-osc); border: 1px solid #b7e0d8; }
-  [hidden] { display: none !important; }
+:root{--f:#f4f7f6;--t:#14262b;--s:#5b6e72;--l:#d8e1df;--a:#0f7b6c;--r:#b3412f}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--f);color:var(--t);line-height:1.5}
+header{background:var(--t);color:#fff;padding:24px 20px 0}
+.w{max-width:920px;margin:0 auto}
+h1{margin:0 0 14px;font-size:1.8rem;display:flex;justify-content:space-between;align-items:center}
+nav{display:flex;gap:4px;overflow-x:auto}
+nav button{font:inherit;font-weight:700;background:none;color:#a9c0c4;border:0;padding:11px 16px;cursor:pointer;border-radius:10px 10px 0 0;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--f);color:var(--t)}
+main{padding:26px 20px 60px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;background:#fff;border:1px solid var(--l);border-radius:14px;padding:18px;margin-bottom:24px}
+#login{max-width:380px;margin:30px auto}
+label{display:grid;gap:4px;font-size:.8rem;font-weight:700;color:var(--s)}
+input,select{font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--l);border-radius:8px;background:#fbfdfc;color:var(--t);width:100%}
+.b{font:inherit;font-weight:700;cursor:pointer;background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 18px;align-self:end}
+.b:disabled{opacity:.6}
+.b2{font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;background:none;color:#a9c0c4;border:1px solid #4a6368;border-radius:8px;padding:6px 12px}
+#login .b2{color:var(--a);border-color:var(--a);padding:10px}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+li{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--l);border-radius:12px;padding:14px 16px}
+li b{display:block}li span{color:var(--s);font-size:.88rem}
+.x{font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;background:none;color:var(--r);border:1px solid #e6c4bd;border-radius:8px;padding:6px 12px}
+.v{color:var(--s);justify-content:center;border-style:dashed}
+#msg{display:none;margin-bottom:16px;padding:12px 16px;border-radius:10px;font-size:.92rem}
+#msg.error{display:block;background:#fbeeeb;color:var(--r);border:1px solid #e6c4bd}
+#msg.ok{display:block;background:#e3f4f0;color:#0b5c51;border:1px solid #b7e0d8}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
+<header><div class="w">
+  <h1>HogarRent <button id="salir" class="b2" hidden>Cerrar sesión</button></h1>
+  <nav id="nav" hidden></nav>
+</div></header>
 
-<header>
-  <div class="contenedor">
-    <h1>HogarRent</h1>
-    <p>Gestión de rentas inmobiliarias</p>
-    <nav role="tablist">
-      <button role="tab" id="tab-clientes" aria-selected="true" aria-controls="panel-clientes">Clientes</button>
-      <button role="tab" id="tab-propiedades" aria-selected="false" aria-controls="panel-propiedades">Propiedades</button>
-    </nav>
-  </div>
-</header>
-
-<main class="contenedor">
-  <div id="mensaje" role="status"></div>
-
-  <section id="panel-clientes" role="tabpanel" aria-labelledby="tab-clientes">
-    <h2>Registrar cliente</h2>
-    <form id="form-cliente">
-      <label>Nombre(s) <input id="c-nombre" required placeholder="Ana"></label>
-      <label>Apellidos <input id="c-apellido" required placeholder="López"></label>
-      <label>Teléfono <input id="c-telefono" type="tel" inputmode="numeric" placeholder="8112345678"></label>
-      <label>Correo <input id="c-correo" type="email" placeholder="ana@correo.com"></label>
-      <button class="btn" type="submit">Agregar cliente</button>
-    </form>
-    <h2>Clientes registrados</h2>
-    <ul id="lista-clientes"></ul>
-  </section>
-
-  <section id="panel-propiedades" role="tabpanel" aria-labelledby="tab-propiedades" hidden>
-    <h2>Registrar propiedad</h2>
-    <form id="form-propiedad">
-      <label>Nombre <input id="p-nombre" required placeholder="Casa Los Pinos"></label>
-      <label>Tipo <input id="p-tipo" required placeholder="Casa, departamento, local…"></label>
-      <label>Enlace de foto <input id="p-foto" type="url" placeholder="https://…"></label>
-      <button class="btn" type="submit">Agregar propiedad</button>
-    </form>
-    <h2>Propiedades en renta</h2>
-    <ul id="lista-propiedades"></ul>
-  </section>
+<main class="w">
+  <div id="msg" role="status"></div>
+  <form id="login">
+    <h2 style="margin:0">Iniciar sesión</h2>
+    <label>Correo <input id="lc" type="email" required></label>
+    <label>Contraseña <input id="lp" type="password" required minlength="6"></label>
+    <button class="b">Entrar</button>
+    <button type="button" id="reg" class="b2">Crear cuenta</button>
+  </form>
+  <div id="app" hidden></div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-  const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
+const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
 
-  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = i => document.getElementById(i);
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const aviso = (x, t) => { const m = $("msg"); m.textContent = x; m.className = t; if (t == "ok") setTimeout(() => m.className = "", 2500); };
+const C = {};
+const lab = (n, id) => { const r = C[n].find(r => r[E[n].id] == id); return r ? E[n].tit(r) : "—"; };
+const DIR = ["country","state","municipality","neighborhood","street","house_number"];
 
-  const $ = (id) => document.getElementById(id);
-  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const E = {
+  clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
+    f:[["first_name","Nombre","text",1],["last_name","Apellido","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
+    fijo:{status:"activo"},
+    tit:r=>`${r.first_name} ${r.last_name}`,
+    sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
+  propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
+    q:"*, propieties_info(address_propiety(street,house_number,neighborhood,municipality,state))",
+    f:[["name","Nombre","text",1],["type","Tipo","text",1],["photo_one","Enlace de foto","url"],["street","Calle","text",1],["house_number","Número","num"],["neighborhood","Colonia","text"],["municipality","Municipio","text"],["state","Estado","text"],["country","País","text",1,"México"]],
+    tit:r=>r.name,
+    sub:r=>{ const a = r.propieties_info?.address_propiety;
+      return r.type + " · " + (a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : "Sin dirección"); },
+    ins: async o => {
+      const a = {}; DIR.forEach(k => { a[k] = o[k]; delete o[k]; });
+      const r1 = await db.from("address_propiety").insert(a).select("id_address").single(); if (r1.error) return r1;
+      const r2 = await db.from("propieties_info").insert({id_address:r1.data.id_address}).select("id_propieties_info").single(); if (r2.error) return r2;
+      o.id_propieties_info = r2.data.id_propieties_info;
+      return db.from("propierties_for_rent").insert(o);
+    } },
+  contratos: { n:"Contratos", s:"contrato", t:"rental_agreements", id:"id_agreements",
+    f:[["id_property","Propiedad","sel",1,null,"propiedades"],["id_coustomers","Cliente","sel",1,null,"clientes"],["start_date","Inicio","date",1],["end_date","Fin","date",1],["monthly_rent","Renta mensual","num",1],["security_deposit","Depósito","num"],["payment_due_day","Día de pago","num"]],
+    fijo:{status:"activo"},
+    val:o=> o.end_date <= o.start_date ? "La fecha de fin debe ser posterior al inicio." :
+      C.contratos.some(c => c.id_property == o.id_property && c.status == "activo") ? "Esa propiedad ya tiene un contrato activo." : null,
+    tit:r=>`${lab("propiedades",r.id_property)} ↔ ${lab("clientes",r.id_coustomers)}`,
+    sub:r=>`${r.start_date} a ${r.end_date} · $${r.monthly_rent}/mes · ${r.status}` },
+  pagos: { n:"Pagos", s:"pago", t:"payments_rentals", id:"id_payments",
+    f:[["id_agreements","Contrato","sel",1,null,"contratos"],["amount","Monto","num",1],["currency","Moneda","text",0,"MXN"],["payment_date","Fecha de pago","date"],["due_date","Vencimiento","date"],["payment_method","Método de pago","text"],["transaction_reference","Referencia","text"]],
+    fijo:{status:"pagado"},
+    ins: o => { o.id_coustomers = C.contratos.find(c => c.id_agreements == o.id_agreements)?.id_coustomers; return db.from("payments_rentals").insert(o); },
+    tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
+    sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` }
+};
 
-  function aviso(texto, tipo) {
-    const m = $("mensaje");
-    m.textContent = texto;
-    m.className = tipo;
-    if (tipo === "ok") setTimeout(() => { m.className = ""; }, 2500);
+function armar() {
+  $("nav").innerHTML = Object.keys(E).map((n,i) => `<button data-n="${n}" aria-selected="${i==0}">${E[n].n}</button>`).join("");
+  $("app").innerHTML = Object.keys(E).map((n,i) => `<section id="p-${n}" ${i ? "hidden" : ""}>
+    <form data-n="${n}">${E[n].f.map(([k,l,t,r,v]) => `<label>${l}${t == "sel"
+      ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
+      : `<input id="${n}-${k}" type="${t == "num" ? "number" : t}" ${t == "num" ? 'step="any"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
+    <button class="b">Agregar ${E[n].s}</button></form><ul id="l-${n}"></ul></section>`).join("");
+}
+
+function pintar() {
+  for (const n in E) {
+    E[n].f.forEach(([k,,t,,,s]) => { if (t == "sel") {
+      const el = $(`${n}-${k}`), v = el.value;
+      el.innerHTML = '<option value="">Selecciona…</option>' + C[s].map(r => `<option value="${r[E[s].id]}">${esc(E[s].tit(r))}</option>`).join("");
+      el.value = v; } });
+    $("l-" + n).innerHTML = C[n].length
+      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div><button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button></li>`).join("")
+      : '<li class="v">Aún no hay registros.</li>';
   }
+}
 
-  function mostrar(cual) {
-    ["clientes", "propiedades"].forEach((n) => {
-      $("tab-" + n).setAttribute("aria-selected", n === cual);
-      $("panel-" + n).hidden = n !== cual;
-    });
-    $("mensaje").className = "";
+async function cargar() {
+  for (const n in E) {
+    const { data, error } = await db.from(E[n].t).select(E[n].q || "*").order(E[n].id, { ascending:false });
+    if (error) return aviso(`No se pudo cargar ${E[n].n}: ${error.message}`, "error");
+    C[n] = data;
   }
-  $("tab-clientes").onclick = () => mostrar("clientes");
-  $("tab-propiedades").onclick = () => mostrar("propiedades");
+  pintar();
+}
 
-  async function cargarClientes() {
-    const { data, error } = await db.from("coustomers_info")
-      .select("id_coustomers, first_name, last_name, phone_number, email")
-      .order("id_coustomers", { ascending: false });
-    if (error) return aviso("No se pudieron cargar los clientes: " + error.message, "error");
+db.auth.onAuthStateChange((_, ses) => {
+  const on = !!ses;
+  $("login").hidden = on; $("app").hidden = !on; $("nav").hidden = !on; $("salir").hidden = !on;
+  if (on) { if (!$("app").innerHTML) armar(); cargar(); }
+});
+$("login").onsubmit = async e => {
+  e.preventDefault();
+  const { error } = await db.auth.signInWithPassword({ email:$("lc").value.trim(), password:$("lp").value });
+  if (error) aviso("No se pudo iniciar sesión: " + error.message, "error");
+};
+$("reg").onclick = async () => {
+  const { data, error } = await db.auth.signUp({ email:$("lc").value.trim(), password:$("lp").value });
+  if (error) return aviso(error.message, "error");
+  aviso(data.session ? "Cuenta creada" : "Cuenta creada. Revisa tu correo para confirmarla.", "ok");
+};
+$("salir").onclick = () => db.auth.signOut();
 
-    const ul = $("lista-clientes");
-    if (!data.length) {
-      ul.innerHTML = '<li class="vacio" style="display:block">Aún no hay clientes. Agrega el primero con el formulario.</li>';
-      return;
-    }
-    ul.innerHTML = data.map((c) => `
-      <li>
-        <div class="datos">
-          <strong>${esc(c.first_name)} ${esc(c.last_name)}</strong>
-          <span>${esc(c.phone_number ?? "Sin teléfono")} · ${esc(c.email || "Sin correo")}</span>
-        </div>
-        <button class="eliminar" data-id="${c.id_coustomers}">Eliminar</button>
-      </li>`).join("");
+document.addEventListener("submit", async e => {
+  const f = e.target, n = f.dataset.n; if (!n) return;
+  e.preventDefault();
+  const d = E[n], o = { ...d.fijo };
+  d.f.forEach(([k,,t]) => { const v = $(`${n}-${k}`).value.trim(); o[k] = v === "" ? null : (t == "num" || t == "sel") ? Number(v) : v; });
+  const m = d.val && d.val(o); if (m) return aviso(m, "error");
+  const btn = e.submitter; btn.disabled = true;
+  const { error } = await (d.ins ? d.ins(o) : db.from(d.t).insert(o));
+  btn.disabled = false;
+  if (error) return aviso("No se pudo guardar: " + error.message, "error");
+  f.reset(); aviso("Registro agregado", "ok"); cargar();
+});
+
+document.addEventListener("click", async e => {
+  const tab = e.target.closest("#nav button");
+  if (tab) {
+    document.querySelectorAll("#nav button").forEach(x => x.setAttribute("aria-selected", x == tab));
+    Object.keys(E).forEach(n => $("p-" + n).hidden = n != tab.dataset.n);
+    $("msg").className = ""; return;
   }
-
-  $("form-cliente").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btn = e.submitter; btn.disabled = true;
-    const tel = $("c-telefono").value.replace(/\D/g, "");
-    const { error } = await db.from("coustomers_info").insert({
-      first_name: $("c-nombre").value.trim(),
-      last_name: $("c-apellido").value.trim(),
-      phone_number: tel ? Number(tel) : null,
-      email: $("c-correo").value.trim() || null,
-      status: "activo"
-    });
-    btn.disabled = false;
-    if (error) return aviso("No se pudo guardar el cliente: " + error.message, "error");
-    e.target.reset();
-    aviso("Cliente agregado", "ok");
-    cargarClientes();
-  });
-
-  $("lista-clientes").addEventListener("click", async (e) => {
-    const id = e.target.dataset.id;
-    if (!id || !confirm("¿Eliminar este cliente?")) return;
-    const { error } = await db.from("coustomers_info").delete().eq("id_coustomers", id);
+  if (e.target.classList.contains("x")) {
+    if (!confirm("¿Eliminar este registro?")) return;
+    const d = E[e.target.dataset.n];
+    const { error } = await db.from(d.t).delete().eq(d.id, e.target.dataset.id);
     if (error) return aviso("No se pudo eliminar: " + error.message, "error");
-    aviso("Cliente eliminado", "ok");
-    cargarClientes();
-  });
-
-  async function cargarPropiedades() {
-    const { data, error } = await db.from("propierties_for_rent")
-      .select("id_propierty, name, type, photo_one")
-      .order("id_propierty", { ascending: false });
-    if (error) return aviso("No se pudieron cargar las propiedades: " + error.message, "error");
-
-    const ul = $("lista-propiedades");
-    if (!data.length) {
-      ul.innerHTML = '<li class="vacio" style="display:block">Aún no hay propiedades. Agrega la primera con el formulario.</li>';
-      return;
-    }
-    ul.innerHTML = data.map((p) => `
-      <li>
-        <div class="datos">
-          <strong>${esc(p.name)}</strong>
-          <span>${esc(p.type || "Sin tipo")}${p.photo_one ? ` · <a href="${esc(p.photo_one)}" target="_blank" rel="noopener">Ver foto</a>` : ""}</span>
-        </div>
-        <button class="eliminar" data-id="${p.id_propierty}">Eliminar</button>
-      </li>`).join("");
+    aviso("Registro eliminado", "ok"); cargar();
   }
-
-  $("form-propiedad").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btn = e.submitter; btn.disabled = true;
-    const { error } = await db.from("propierties_for_rent").insert({
-      name: $("p-nombre").value.trim(),
-      type: $("p-tipo").value.trim(),
-      photo_one: $("p-foto").value.trim() || null
-    });
-    btn.disabled = false;
-    if (error) return aviso("No se pudo guardar la propiedad: " + error.message, "error");
-    e.target.reset();
-    aviso("Propiedad agregada", "ok");
-    cargarPropiedades();
-  });
-
-  $("lista-propiedades").addEventListener("click", async (e) => {
-    const id = e.target.dataset.id;
-    if (!id || !confirm("¿Eliminar esta propiedad?")) return;
-    const { error } = await db.from("propierties_for_rent").delete().eq("id_propierty", id);
-    if (error) return aviso("No se pudo eliminar: " + error.message, "error");
-    aviso("Propiedad eliminada", "ok");
-    cargarPropiedades();
-  });
-
-  cargarClientes();
-  cargarPropiedades();
+});
 </script>
 </body>
 </html>
