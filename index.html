@@ -49,6 +49,9 @@ li span{color:var(--s);font-size:.9rem}
 #msg{display:none;margin-bottom:18px;padding:13px 16px;border-radius:12px;font-size:.93rem}
 #msg.error{display:block;background:#FBEEEB;color:var(--r);border:1px solid #E6C4BD}
 #msg.ok{display:block;background:#E3F4F0;color:#0B5C51;border:1px solid #B7E0D8}
+.buscar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:22px}
+.buscar input{grid-column:span 2}
+@media(max-width:620px){.buscar input{grid-column:auto}}
 #lcat{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px}
 #lcat li{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;overflow:hidden;border-radius:20px;box-shadow:0 10px 28px -18px rgba(16,34,47,.45)}
 #lcat li>div:not(.gal){padding:16px 18px 6px;flex:1}
@@ -94,6 +97,11 @@ li span{color:var(--s);font-size:.9rem}
   </form>
   <section id="cat">
     <div class="hero"><h2>Encuentra tu próximo hogar</h2><p>Casas y departamentos en renta. Elige una propiedad y el dueño te contacta.</p></div>
+    <div class="buscar">
+      <input id="q" type="search" placeholder="Buscar por nombre, colonia o municipio…" aria-label="Buscar propiedades">
+      <select id="ft" aria-label="Tipo de propiedad"><option value="">Todos los tipos</option></select>
+      <select id="fr" aria-label="Recámaras"><option value="">Recámaras</option><option value="1">1 o más</option><option value="2">2 o más</option><option value="3">3 o más</option><option value="4">4 o más</option></select>
+    </div>
     <form id="interes" hidden>
       <b id="i-t" style="grid-column:1/-1"></b><input type="hidden" id="i-prop">
       <label>Nombre <input id="i-nom" required></label>
@@ -119,10 +127,8 @@ li span{color:var(--s);font-size:.9rem}
 <div id="zoom" hidden><img id="zi" alt=""></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-// ====== PEGA TUS DATOS DE SUPABASE ======
 const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
-// ========================================
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = i => document.getElementById(i);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -135,7 +141,6 @@ const INFO = ["description","rooms","bathrooms","floors","garage","outdoor_space
 const carac = r => { const i = r.propieties_info || {};
   return [i.rooms && i.rooms + " rec.", i.bathrooms && i.bathrooms + " baños", i.garage && i.garage + " cochera", i.pool && "alberca", i.furnished && "amueblada"].filter(Boolean).join(" · "); };
 
-// Convierte cualquier imagen compatible (jpg, png, webp...) a JPG de máx. 1600 px
 async function aJpg(file) {
   try {
     const bmp = await createImageBitmap(file), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
@@ -155,7 +160,6 @@ async function subir(file) {
   return db.storage.from("fotos").getPublicUrl(nombre).data.publicUrl;
 }
 
-// Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
     f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
@@ -236,7 +240,6 @@ async function cargar() {
   pintar();
 }
 
-// ---------- Sesión ----------
 const ADMIN_EMAIL = "fofyy1206@gmail.com"; // el correo del administrador (el mismo del SQL)
 let verLogin = false, esAdm = false, miId = null, miUser = null, tabActual = "cat";
 function tabC(k) {
@@ -276,7 +279,18 @@ async function catalogo() {
   const { data, error } = await db.from("propierties_for_rent").select(E.propiedades.q).order("id_propierty", { ascending:false });
   if (error) return aviso("No se pudo cargar el catálogo: " + error.message, "error");
   C.cat = data;
-  $("lcat").innerHTML = data.length ? data.map(r => `<li>${[r.photo_one, r.photo_two, r.photo_three].some(Boolean) ? `<div class="gal">${[r.photo_one, r.photo_two, r.photo_three].filter(Boolean).map(u => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(dirTxt(r))}</span><div class="chips">${chips(r)}</div>${r.contact_email ? `<span class="ct">Contacto: ${esc(r.contact_name || "Propietario")}${r.contact_phone ? ` · <a href="tel:${esc(r.contact_phone)}">${esc(r.contact_phone)}</a>` : ""} · <a href="mailto:${esc(r.contact_email)}">${esc(r.contact_email)}</a></span>` : ""}</div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : '<li class="v">Aún no hay propiedades publicadas.</li>';
+  const tipos = [...new Map(data.filter(r => r.type).map(r => [r.type.trim().toLowerCase(), r.type.trim()])).values()], ft = $("ft"), v = ft.value;
+  ft.innerHTML = '<option value="">Todos los tipos</option>' + tipos.map(x => `<option>${esc(x)}</option>`).join(""); ft.value = v;
+  pintarCat();
+}
+$("q").oninput = $("ft").onchange = $("fr").onchange = () => pintarCat();
+
+function pintarCat() {
+  const q = $("q").value.trim().toLowerCase(), t = $("ft").value.toLowerCase(), rc = Number($("fr").value) || 0;
+  const data = C.cat.filter(r => { const i = r.propieties_info || {};
+    return (!q || [r.name, r.type, dirTxt(r), i.description].join(" ").toLowerCase().includes(q))
+      && (!t || (r.type || "").trim().toLowerCase() == t) && (!rc || (i.rooms || 0) >= rc); });
+  $("lcat").innerHTML = data.length ? data.map(r => `<li>${[r.photo_one, r.photo_two, r.photo_three].some(Boolean) ? `<div class="gal">${[r.photo_one, r.photo_two, r.photo_three].filter(Boolean).map(u => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}<div style="flex:1"><b>${esc(r.name)}</b><span>${esc(dirTxt(r))}</span><div class="chips">${chips(r)}</div>${r.contact_email ? `<span class="ct">Contacto: ${esc(r.contact_name || "Propietario")}${r.contact_phone ? ` · <a href="tel:${esc(r.contact_phone)}">${esc(r.contact_phone)}</a>` : ""} · <a href="mailto:${esc(r.contact_email)}">${esc(r.contact_email)}</a></span>` : ""}</div><button class="b" data-i="${r.id_propierty}">Me interesa</button></li>`).join("") : `<li class="v">${C.cat.length ? "No hay propiedades que coincidan con tu búsqueda." : "Aún no hay propiedades publicadas."}</li>`;
 }
 $("interes").onsubmit = async e => {
   e.preventDefault();
@@ -316,7 +330,6 @@ $("salir").onclick = async () => {
   location.reload();
 };
 
-// ---------- Acciones ----------
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
   e.preventDefault();
