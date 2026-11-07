@@ -154,7 +154,7 @@ async function subir(file) {
 
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[], ro:1, 
+    f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
   propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
@@ -164,7 +164,7 @@ const E = {
     sub:r=>{ const a = r.propieties_info?.address_propiety;
       return r.type + " · " + (a ? [[a.street,a.house_number].filter(Boolean).join(" "),a.neighborhood,a.municipality,a.state].filter(Boolean).join(", ") : "Sin dirección") + (carac(r) ? " · " + carac(r) : ""); },
     ins: async o => {
-      if (!esAdm && miUser) { 
+      if (!esAdm && miUser) { // el contacto del dueño se guarda junto a la propiedad
         const m = miUser.user_metadata || {};
         o.contact_name = [m.first_name, m.last_name].filter(Boolean).join(" ") || null;
         o.contact_phone = m.phone || null;
@@ -192,7 +192,7 @@ const E = {
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
     sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
   interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
-    f:[], ro:1, 
+    f:[], ro:1, // solo consulta: las solicitudes las envían los visitantes
     tit:r=>r.full_name,
     sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
