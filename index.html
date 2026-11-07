@@ -87,8 +87,7 @@ const DIR = ["country","state","municipality","neighborhood","street","house_num
 // Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[["first_name","Nombre","text",1],["last_name","Apellido","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
-    fijo:{status:"activo"},
+    f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
   propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
@@ -118,7 +117,7 @@ const E = {
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
     sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
   interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
-    f:[["full_name","Nombre","text",1],["email","Correo","email"],["phone_number","Teléfono","num"],["id_propierty","Propiedad","sel",1,null,"propiedades"],["message","Mensaje","text"]],
+    f:[], ro:1, // solo consulta: las solicitudes las envían los visitantes
     tit:r=>r.full_name,
     sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
@@ -130,6 +129,7 @@ function armar() {
       ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
       : `<input id="${n}-${k}" type="${t == "num" ? "number" : t}" ${t == "num" ? 'step="any"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
     <button class="b">Agregar ${E[n].s}</button></form><ul id="l-${n}"></ul></section>`).join("");
+  Object.keys(E).filter(n => E[n].ro).forEach(n => document.querySelector("#p-" + n + " form").remove());
 }
 
 function pintar() {
@@ -139,7 +139,7 @@ function pintar() {
       el.innerHTML = '<option value="">Selecciona…</option>' + C[s].map(r => `<option value="${r[E[s].id]}">${esc(E[s].tit(r))}</option>`).join("");
       el.value = v; } });
     $("l-" + n).innerHTML = C[n].length
-      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div><button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button></li>`).join("")
+      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div>${E[n].ro ? "" : `<button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button>`}</li>`).join("")
       : '<li class="v">Aún no hay registros.</li>';
   }
 }
