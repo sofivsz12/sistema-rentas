@@ -78,7 +78,7 @@ const DIR = ["country","state","municipality","neighborhood","street","house_num
 
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[["first_name","Nombre","text",1],["last_name","Apellido","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
+    f:[["first_name","Nombre(s)","text",1],["last_name","Apellidos","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
     fijo:{status:"activo"},
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
