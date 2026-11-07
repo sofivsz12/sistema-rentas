@@ -304,7 +304,12 @@ $("reg").onclick = async () => {
   modo(false);
   aviso(data.session ? "Cuenta creada" : "Cuenta creada. Revisa tu correo para confirmarla.", "ok");
 };
-$("salir").onclick = () => { verLogin = false; db.auth.signOut(); };
+$("salir").onclick = async () => {
+  verLogin = false;
+  try { await db.auth.signOut({ scope:"local" }); } catch (e) {}
+  Object.keys(localStorage).filter(k => k.startsWith("sb-")).forEach(k => localStorage.removeItem(k));
+  location.reload();
+};
 
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
