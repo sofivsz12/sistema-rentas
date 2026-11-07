@@ -43,17 +43,11 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
 <main class="w">
   <div id="msg" role="status"></div>
   <form id="login" hidden>
-    <h2 id="lt" style="margin:0">Iniciar sesión</h2>
-    <div id="extra" hidden style="display:grid;gap:10px">
-      <label>Nombre(s) <input id="rn"></label>
-      <label>Apellidos <input id="ra"></label>
-      <label>Teléfono (10 dígitos) <input id="rt" type="tel" inputmode="numeric"></label>
-    </div>
+    <h2 style="margin:0">Iniciar sesión</h2>
     <label>Correo <input id="lc" type="email" required></label>
     <label>Contraseña <input id="lp" type="password" required minlength="6"></label>
-    <button class="b" id="ent">Entrar</button>
+    <button class="b">Entrar</button>
     <button type="button" id="reg" class="b2">Crear cuenta</button>
-    <button type="button" id="vol" class="b2" hidden>Ya tengo cuenta</button>
   </form>
   <section id="cat">
     <h2>Propiedades disponibles</h2>
@@ -72,10 +66,8 @@ li b{display:block}li span{color:var(--s);font-size:.88rem}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-// ====== PEGA TUS DATOS DE SUPABASE ======
 const SUPABASE_URL = "https://saoisagskkdcmfnxqvmi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb2lzYWdza2tkY21mbnhxdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwMjEzMjYsImV4cCI6MjEwOTU5NzMyNn0.opnjF_h9fvXGOox0_wijZ0ws00jcauVpitKcmECBHqo";
-// ========================================
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = i => document.getElementById(i);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -84,10 +76,10 @@ const C = {};
 const lab = (n, id) => { const r = C[n].find(r => r[E[n].id] == id); return r ? E[n].tit(r) : "—"; };
 const DIR = ["country","state","municipality","neighborhood","street","house_number"];
 
-// Campo: [columna, etiqueta, tipo, obligatorio, valor por defecto, tabla origen (select)]
 const E = {
   clientes: { n:"Clientes", s:"cliente", t:"coustomers_info", id:"id_coustomers",
-    f:[], ro:1, // los clientes se registran solos desde la página; el administrador solo consulta sus datos
+    f:[["first_name","Nombre","text",1],["last_name","Apellido","text",1],["phone_number","Teléfono","num"],["email","Correo","email"]],
+    fijo:{status:"activo"},
     tit:r=>`${r.first_name} ${r.last_name}`,
     sub:r=>`${r.phone_number ?? "Sin teléfono"} · ${r.email || "Sin correo"}` },
   propiedades: { n:"Propiedades", s:"propiedad", t:"propierties_for_rent", id:"id_propierty",
@@ -117,7 +109,7 @@ const E = {
     tit:r=>`$${r.amount} ${r.currency || ""} · ${lab("contratos",r.id_agreements)}`,
     sub:r=>`${r.status} · ${r.payment_date || "sin fecha"}${r.payment_method ? " · " + r.payment_method : ""}` },
   interesados: { n:"Interesados", s:"interesado", t:"property_viewings", id:"id",
-    f:[], ro:1, // solo consulta: las solicitudes las envían los visitantes
+    f:[["full_name","Nombre","text",1],["email","Correo","email"],["phone_number","Teléfono","num"],["id_propierty","Propiedad","sel",1,null,"propiedades"],["message","Mensaje","text"]],
     tit:r=>r.full_name,
     sub:r=>`${lab("propiedades",r.id_propierty)} · ${r.email || "sin correo"} · ${r.phone_number ?? "sin teléfono"}${r.message ? " · " + r.message : ""}` }
 };
@@ -129,7 +121,6 @@ function armar() {
       ? `<select id="${n}-${k}" ${r ? "required" : ""}></select>`
       : `<input id="${n}-${k}" type="${t == "num" ? "number" : t}" ${t == "num" ? 'step="any"' : ""} ${r ? "required" : ""} value="${v || ""}">`}</label>`).join("")}
     <button class="b">Agregar ${E[n].s}</button></form><ul id="l-${n}"></ul></section>`).join("");
-  Object.keys(E).filter(n => E[n].ro).forEach(n => document.querySelector("#p-" + n + " form").remove());
 }
 
 function pintar() {
@@ -139,7 +130,7 @@ function pintar() {
       el.innerHTML = '<option value="">Selecciona…</option>' + C[s].map(r => `<option value="${r[E[s].id]}">${esc(E[s].tit(r))}</option>`).join("");
       el.value = v; } });
     $("l-" + n).innerHTML = C[n].length
-      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div>${E[n].ro ? "" : `<button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button>`}</li>`).join("")
+      ? C[n].map(r => `<li><div><b>${esc(E[n].tit(r))}</b><span>${esc(E[n].sub(r))}</span></div><button class="x" data-n="${n}" data-id="${r[E[n].id]}">Eliminar</button></li>`).join("")
       : '<li class="v">Aún no hay registros.</li>';
   }
 }
@@ -153,8 +144,7 @@ async function cargar() {
   pintar();
 }
 
-// ---------- Sesión ----------
-const ADMIN_EMAIL = "fofyy1206@gmail.com"; // el correo del administrador (el mismo del SQL)
+const ADMIN_EMAIL = "fofyy1206@gmail.com";
 let verLogin = false;
 db.auth.onAuthStateChange((_, ses) => {
   const on = !!ses, adm = on && ses.user.email === ADMIN_EMAIL;
@@ -184,26 +174,14 @@ $("login").onsubmit = async e => {
   const { error } = await db.auth.signInWithPassword({ email:$("lc").value.trim(), password:$("lp").value });
   if (error) aviso("No se pudo iniciar sesión: " + error.message, "error");
 };
-function modo(r) {
-  $("extra").hidden = !r; $("ent").hidden = r; $("vol").hidden = !r;
-  $("lt").textContent = r ? "Crear cuenta" : "Iniciar sesión";
-  $("reg").textContent = r ? "Crear mi cuenta" : "Crear cuenta";
-}
-$("vol").onclick = () => modo(false);
 $("reg").onclick = async () => {
-  if ($("extra").hidden) return modo(true);
-  const nom = $("rn").value.trim(), ape = $("ra").value.trim(), tel = $("rt").value.replace(/\D/g, "");
-  if (!nom || !ape || tel.length < 10) return aviso("Escribe tu nombre, apellido y un teléfono de 10 dígitos.", "error");
   if (!$("lc").value.trim() || $("lp").value.length < 6) return aviso("Escribe tu correo y una contraseña de al menos 6 caracteres.", "error");
-  const { data, error } = await db.auth.signUp({ email:$("lc").value.trim(), password:$("lp").value,
-    options:{ data:{ first_name:nom, last_name:ape, phone:tel } } });
+  const { data, error } = await db.auth.signUp({ email:$("lc").value.trim(), password:$("lp").value });
   if (error) return aviso(error.message, "error");
-  modo(false);
   aviso(data.session ? "Cuenta creada" : "Cuenta creada. Revisa tu correo para confirmarla.", "ok");
 };
 $("salir").onclick = () => { verLogin = false; db.auth.signOut(); };
 
-// ---------- Acciones ----------
 document.addEventListener("submit", async e => {
   const f = e.target, n = f.dataset.n; if (!n) return;
   e.preventDefault();
